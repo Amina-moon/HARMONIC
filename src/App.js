@@ -9,6 +9,7 @@ import Favourite from './pages/Favourite.jsx';
 import Profile from './pages/Profile.jsx';
 import Search from './pages/Search.jsx';
 import Displaymusic from './pages/Displaymusic.jsx';
+import MusicPlayer from "./components/MusicPlayer";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.bgLight};
@@ -42,7 +43,7 @@ function App() {
             <NavBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
              <Routes>
              <Route path="/" exact element = {<Dashboard/>}/>
-             <Route path="/favourite" exact element = {<Favourite/>}/>
+             <Route path="/favourites" exact element = {<Favourite/>}/>
              <Route path="/search" exact element = {<Search/>}/>
              <Route path="/profile" exact element = {<Profile/>}/>
              
@@ -50,7 +51,9 @@ function App() {
 
              </Routes>
              </Frame>
+            
         </Container>
+        <MusicPlayer/>
       </BrowserRouter>
     </ThemeProvider>
   );
