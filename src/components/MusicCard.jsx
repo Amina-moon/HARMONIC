@@ -1,12 +1,14 @@
-import React from "react";
+// export default MusicCard;
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { tracks } from "../utils/Track";
+import axios from "axios";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import { useState, useRef, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
+
+// Styled components
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const WholeCardContainer = styled.div`
@@ -44,6 +46,7 @@ const CardContainer = styled.div`
 const CardWrapper = styled.div`
   margin: 10px;
 `;
+
 const Top = styled.div`
   display: flex;
   justify-content: center;
@@ -51,12 +54,13 @@ const Top = styled.div`
   height: 150px;
   position: relative;
 `;
+
 const CardTitle = styled.h2`
   font-size: 24px;
   margin-top: -20px;
   margin-bottom: 10px;
   margin-left: -15px;
-  align-text: start;
+  text-align: start;
   color: ${({ theme }) => theme.text_primary};
   white-space: nowrap;
   overflow: hidden;
@@ -68,8 +72,7 @@ const CardContent = styled.p`
   font-size: 16px;
   color: ${({ theme }) => theme.text_primary};
   margin-top: -40px;
-  ${"" /* margin-bottom: px; */}
-  margin-left:-15px;
+  margin-left: -15px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -90,6 +93,7 @@ const CardImage = styled.img`
   border-radius: 10px;
   max-width: 250px;
 `;
+
 const Favorite = styled(IconButton)`
   color: white !important;
   top: 1px;
@@ -97,20 +101,22 @@ const Favorite = styled(IconButton)`
   padding: 6px !important;
   border-radius: 50%;
   z-index: 100;
-  dispaly: flex;
+  display: flex;
   align-items: center;
   background: ${({ theme }) => theme.text_secondary} !important;
   position: absolute !important;
   backdrop-filter: blur(4px);
 `;
+
 const CreaterInfo = styled.div`
-  dislay: flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-top: 1px;
   margin-left: -120px;
 `;
+
 const Creater = styled.div`
   display: flex;
   gap: 8px;
@@ -196,9 +202,33 @@ export const DropdownLink = styled.a`
  }
 `;
 const MusicCard = () => {
-  const [favoriteStatus, setFavoriteStatus] = useState(
-    Array(tracks.length).fill(false)
-  );
+  const [tracks, setTracks] = useState([]);
+  const [favoriteStatus, setFavoriteStatus] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/song/')
+      .then(response => {
+        setTracks(response.data);
+        setFavoriteStatus(new Array(response.data.length).fill(false));
+        setCurrentSong(response.data[0]); // Set the initial song if available
+      })
+      .catch(error => {
+        console.error('Error fetching the data', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
 
   const handleFavoriteClick = (index) => {
     const updatedFavoriteStatus = [...favoriteStatus];
@@ -206,122 +236,92 @@ const MusicCard = () => {
     setFavoriteStatus(updatedFavoriteStatus);
   };
 
-  
-  const [songs, setSongs] = useState(tracks);
-  const [isplaying, setisPlaying] = useState(false);
-  const [currentsong, setCurrentSong] = useState(tracks[0]);
-  const audioRef = useRef();
-  useEffect(() => {
-    if (isplaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isplaying]);
-
   const onPlaying = () => {
-    const duration = audioRef.current.duration;
-    const currentTime = audioRef.current.currentTime;
-    setCurrentSong({
-      ...currentsong,
-      progress: (currentTime / duration) * 100,
-      length: duration,
-    });
+    if (audioRef.current) {
+      const duration = audioRef.current.duration;
+      const currentTime = audioRef.current.currentTime;
+      setCurrentSong({
+        ...currentSong,
+        progress: (currentTime / duration) * 100,
+        length: duration,
+      });
+    }
   };
+
   const playCurrent = (index) => {
     setCurrentSong(tracks[index]);
-    setisPlaying(true);
-    audioRef.current.currentTime =  0 ;
-    setisPlaying(!isplaying)
+    setIsPlaying(true);
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+    }
+    setIsPlaying(!isPlaying);
   };
-
-  const [dropdownOpen, setDropdownOpen] = useState(Array(tracks.length).fill(false));
-
-  const handleDropdownToggle = (index) => {
-    const newDropdownOpen = [...dropdownOpen];
-    newDropdownOpen[index] = !newDropdownOpen[index];
-    setDropdownOpen(newDropdownOpen);
-  };
-  const [isShowing, setIsShowing] = useState(false)
-
-  const toggleModal = () => {
-    setIsShowing(prevState => !prevState);
-  };
-  
 
   return (
     <div>
       <WholeCardContainer>
         {tracks.map((currentTrack, index) => {
-          const creatorInitial = currentTrack.creater.charAt(0);
+          const creatorInitial = currentTrack.user.username.charAt(0);
           const isFavorite = favoriteStatus[index];
 
+          // console.log(currentSong);
           return (
+
             <CardWrapper key={index}>
               <CardContainer>
                 <Top>
                   <Favorite>
                     <FavoriteIcon
                       onClick={() => handleFavoriteClick(index)}
-                      style={{ color: isFavorite ? "red" : "white" }}
+                      style={{ color: isFavorite ? 'red' : 'white' }}
                     />
                   </Favorite>
-                  <More>
-                  <MoreVertIcon onClick={() => handleDropdownToggle(index)} />
-                  <DropdownContent show={dropdownOpen[index]}>
-
-                <DropdownLink  >Delete Song</DropdownLink>
-                <DropdownLink >Update Song</DropdownLink>
-                <button onClick={() => toggleModal(index)}>Close</button>
-              </DropdownContent>
-                  </More>
-                  
-                  
-                  
-                    <CardImage
-                      src={currentTrack.thumbnail}
-                      alt="audio avatar"
-                    />
-                 
+                  <CardImage
+                    src={currentTrack.cover_photo}
+                    alt="audio avatar"
+                  />
                 </Top>
-
                 <CardTitle>
-                  <p>{currentTrack.songName}</p>
+                  <p>{currentTrack.title}</p>
                 </CardTitle>
                 <CardContent>
-                  <p>{currentTrack.author}</p>
+                  <p>{currentTrack.artist}</p>
                 </CardContent>
                 <SpecialCardContent>
-                  <p>{currentTrack.releaseDate}</p>
+                  <p>{currentTrack.release_date}</p>
                 </SpecialCardContent>
                 <CreaterInfo>
                   <Creater>
-                    <Avatar style={{ height: "30px", width: "30px" }}>
+                    <Avatar style={{ height: '30px', width: '30px' }}>
                       {creatorInitial}
                     </Avatar>
-                    <CreaterName>{currentTrack.creater}</CreaterName>
+                    <CreaterName>{currentTrack.user.username}</CreaterName>
                   </Creater>
                   
                 </CreaterInfo>
                 <PlayIcon>
-                  <PlayArrowIcon onClick={() => playCurrent(index)}/>
+                  <PlayArrowIcon onClick={() => playCurrent(index)} />
                 </PlayIcon>
               </CardContainer>
             </CardWrapper>
           );
         })}
       </WholeCardContainer>
-      <audio src={currentsong.song} ref={audioRef} onTimeUpdate={onPlaying} />
-      <MusicPlayer
-        isplaying={isplaying}
-        setisPlaying={setisPlaying}
-        songs={songs}
-        setSongs={setSongs}
-        currentsong={currentsong}
-        setCurrentSong={setCurrentSong}
-        audioRef={audioRef}
-        playCurrent={playCurrent}
-      />
+      {currentSong && (
+        <audio src={currentSong.audio_file} ref={audioRef} onTimeUpdate={onPlaying} />
+      )}
+      {/* {currentSong && (
+        <MusicPlayer
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          songs={tracks}
+          setSongs={setTracks}
+          currentSong={currentSong}
+          setCurrentSong={setCurrentSong}
+          audioRef={audioRef}
+          playCurrent={playCurrent}
+        />
+      )} */}
     </div>
   );
 };
