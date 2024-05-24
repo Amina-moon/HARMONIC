@@ -4,10 +4,10 @@ import { tracks } from "../utils/Track";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
-
+import Five from "../utils/Five.MP3";
 const WholeCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -161,7 +161,33 @@ const MusicCard = () => {
     updatedFavoriteStatus[index] = !updatedFavoriteStatus[index];
     setFavoriteStatus(updatedFavoriteStatus);
   };
+  const [songs, setSongs] = useState(tracks);
+  const [isplaying, setisPlaying] = useState(false);
+  const [currentsong, setCurrentSong] = useState(tracks[0]);
+  const audioRef = useRef();
+  useEffect(() => {
+    if (isplaying) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isplaying]);
 
+  const onPlaying = () => {
+    const duration = audioRef.current.duration;
+    const currentTime = audioRef.current.currentTime;
+    setCurrentSong({
+      ...currentsong,
+      progress: (currentTime / duration) * 100,
+      length: duration,
+    });
+  };
+  const playCurrent = (index) => {
+    setCurrentSong(tracks[index]);
+    setisPlaying(true);
+    audioRef.current.currentTime =  0 ;
+    setisPlaying(!isplaying)
+  };
   return (
     <div>
       <WholeCardContainer>
@@ -179,16 +205,12 @@ const MusicCard = () => {
                       style={{ color: isFavorite ? "red" : "white" }}
                     />
                   </Favorite>
-                  {currentTrack.thumbnail ? (
+                  
                     <CardImage
                       src={currentTrack.thumbnail}
                       alt="audio avatar"
                     />
-                  ) : (
-                    {
-                      /* <BsMusicNoteBeamed /> */
-                    }
-                  )}
+                 
                 </Top>
 
                 <CardTitle>
@@ -209,14 +231,24 @@ const MusicCard = () => {
                   </Creater>
                 </CreaterInfo>
                 <PlayIcon>
-                  <PlayArrowIcon />
+                  <PlayArrowIcon onClick={() => playCurrent(index)}/>
                 </PlayIcon>
               </CardContainer>
             </CardWrapper>
           );
         })}
       </WholeCardContainer>
-      
+      <audio src={currentsong.song} ref={audioRef} onTimeUpdate={onPlaying} />
+      <MusicPlayer
+        isplaying={isplaying}
+        setisPlaying={setisPlaying}
+        songs={songs}
+        setSongs={setSongs}
+        currentsong={currentsong}
+        setCurrentSong={setCurrentSong}
+        audioRef={audioRef}
+        playCurrent={playCurrent}
+      />
     </div>
   );
 };

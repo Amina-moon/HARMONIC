@@ -53,7 +53,7 @@ function App() {
              </Frame>
             
         </Container>
-        <MusicPlayer/>
+       
       </BrowserRouter>
     </ThemeProvider>
   );

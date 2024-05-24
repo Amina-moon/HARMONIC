@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useRef} from 'react';
 import styled from 'styled-components';
 import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
@@ -9,18 +9,23 @@ import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import VolumeMuteRoundedIcon from '@mui/icons-material/VolumeMuteRounded';
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 import Four from '../utils/Fourr.jpg'
+import { tracks } from '../utils/Track';
 
 const MusicPlayerContainer=  styled.footer`
  position: fixed;
   bottom: 0;
   left: 0;
-  width: 96%; /* Subtract scrollbar width from 100% */
+  width: 100%; /* Subtract scrollbar width from 100% */
   background: #1C1E27;
   color: #ffffff;
-  padding: 20px;
+  padding: 16px 40px;
   z-index: 9999;
   height:45px;
   display:flex;
+  @media ( 460px < width < 1200px){
+    padding: 16px 20px; /* Adjust the padding for smaller screens */
+     
+   }
   
 
 `;
@@ -29,12 +34,19 @@ width:90px;
 height:60px;
 border-radius:5px;
 
+
+
 `;
 const ButtonContainer = styled.div`
   display: flex;
   align-items: center !important;
   
   margin-left:250px;
+  @media ( 460px < width < 1200px){
+  margin-left:20px;
+  
+  }
+  
 `;
 const Button = styled.button`
   background: transparent; 
@@ -47,51 +59,97 @@ const ImageContainer = styled.div`
 display:flex;
 align-items:center;
 margin-left:70px;
+@media ( 460px < width < 1200px){
+  margin-left:0px;
+  }
 
 `;
 const ProgressContainer = styled.div`
   width: 35%;
   height: 8px;
-  background: #4d4d4d;
+  background: purple;
   margin-top: 15px;
    border-radius:4px;
    margin-left:100px;
+   @media ( 460px < width < 1200px){
+    width: 35%;
+    margin-left:15px;
+  }
 `;
 
 const ProgressBar = styled.div`
-  width: ${props => props.progress}%;
   height: 100%;
   background: #ffffff;
 `;
-const MusicPlayer = () => {
-  const progress = 50;
-  
+const MusicPlayer = ({isplaying,setisPlaying,setSongs,currentsong,setCurrentSong,audioRef}) => {
+  const clickRef = useRef();
+  const TogglePlayPause = ()=>
+  {
+setisPlaying(!isplaying)
+  }
+  // progress bar sneneka wede audiow yetenekabet bota yalewn music endil
+  const checkWidth = (e) =>{
+let width = clickRef.current.clientWidth;
+const offset=e.nativeEvent.offsetX
+const divprogress = offset/width * 100;
+audioRef.current.currentTime=divprogress/100 *currentsong.length
+
+  }
+   const skipNext =()=>{
+    const index = tracks.findIndex(x=>x.songName === currentsong.songName)
+    if (index === tracks.length -1 ){
+      setCurrentSong(tracks[0])
+    }
+    else{
+      setCurrentSong(tracks[index +  1])
+    }
+    audioRef.current.currentTime =  0 ;
+    setisPlaying(!isplaying)
+   }
+   const skipBack =()=>{
+    const index = tracks.findIndex(x=>x.songName === currentsong.songName)
+    if (index === 0 ){
+      setCurrentSong(tracks[tracks.length-1])
+    }
+    else{
+      setCurrentSong(tracks[index - 1])
+    }
+    audioRef.current.currentTime =  0 ;
+    setisPlaying(!isplaying)
+   }
+   const skipForward = () => {
+    audioRef.current.currentTime += 15;
+  };
+  const skipBackward = () => {
+    audioRef.current.currentTime -= 15;
+  };
   return (
     <MusicPlayerContainer>
     <ImageContainer>
-      <PlayerImage  src={Four} alt="Player Image" />
+      <PlayerImage  src={currentsong.thumbnail} alt="Player Image" />
       </ImageContainer>
     
     
       <ButtonContainer>
         <Button>
-          <SkipPreviousRoundedIcon />
+          <SkipPreviousRoundedIcon onClick={skipBack}/>
         </Button>
         <Button>
-          <FastRewindRoundedIcon />
+          <FastRewindRoundedIcon onClick={skipBackward}/>
         </Button>
         <Button>
-          <PlayArrowRoundedIcon />
+        {isplaying ? <PauseRoundedIcon onClick={TogglePlayPause}/>:<PlayArrowRoundedIcon onClick={TogglePlayPause}/>}
+          
         </Button>
         <Button>
-          <FastForwardRoundedIcon />
+          <FastForwardRoundedIcon onClick={skipForward}/>
         </Button>
         <Button>
-          <SkipNextRoundedIcon />
+          <SkipNextRoundedIcon onClick={skipNext}/>
         </Button>
       </ButtonContainer>
-      <ProgressContainer>
-        <ProgressBar progress={progress} />
+      <ProgressContainer onClick={checkWidth} ref={clickRef}>
+        <ProgressBar style={{ width: `${currentsong.progress+ "%"}`}} />
       </ProgressContainer>
       
     </MusicPlayerContainer>
