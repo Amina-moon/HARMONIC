@@ -96,7 +96,7 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
 
   }
    const skipNext =()=>{
-    const index = tracks.findIndex(x=>x.songName === currentsong.songName)
+    const index = tracks.findIndex(x=>x.title === currentsong.title)
     if (index === tracks.length -1 ){
       setCurrentSong(tracks[0])
     }
@@ -107,7 +107,7 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
     setisPlaying(!isplaying)
    }
    const skipBack =()=>{
-    const index = tracks.findIndex(x=>x.songName === currentsong.songName)
+    const index = tracks.findIndex(x=>x.title === currentsong.title)
     if (index === 0 ){
       setCurrentSong(tracks[tracks.length-1])
     }
@@ -126,7 +126,8 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
   return (
     <MusicPlayerContainer>
     <ImageContainer>
-      <PlayerImage  src={currentsong.thumbnail} alt="Player Image" />
+      console.log(currentsong);
+      <PlayerImage  src={currentsong.cover_photo} alt="Player Image" />
       </ImageContainer>
     
     
