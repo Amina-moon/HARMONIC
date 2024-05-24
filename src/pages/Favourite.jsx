@@ -1,6 +1,12 @@
 // import { Container } from "@mui/material";
 import React from "react";
 import styled from  'styled-components';
+import { tracks } from "../utils/Track";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { IconButton } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import { useState, useRef, useEffect } from "react";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 const Container=styled.div`
 padding:20px 30px;
 padding-bottom:200px;
@@ -8,7 +14,13 @@ height:100%;
 overflow-y:scroll;
 dosplay:flex;
 gap:20px;
+@media (max-width:760px){
+  padding:6px 10px;
+ 
+}
 `;
+
+
 const Topic=styled.div`
 color:${({ theme }) => theme.text_primary};
 margin-bottom:8px;
@@ -38,8 +50,7 @@ const Favourite = () => {
     <Container>
       <Topic>Favorites</Topic>
       <FavoriteContainer>
-        gggggggggggggggggggggggggggggggggggggggg
-        jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+      
       </FavoriteContainer>
     </Container>
   );
