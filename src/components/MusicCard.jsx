@@ -7,7 +7,8 @@ import Avatar from "@mui/material/Avatar";
 import { useState, useRef, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
-import Five from "../utils/Five.MP3";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 const WholeCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -150,7 +151,50 @@ const PlayIcon = styled.div`
     display: flex;
   }
 `;
+const More = styled(IconButton)`
+  color: white !important;
+  bottom: -120px;
+  right: 6px;
+  padding: 6px !important;
+  border-radius: 50%;
+  z-index: 100;
+  dispaly: flex;
+  align-items: center;
+  position: absolute !important;
 
+`;
+export const DropdownButton = styled.button`
+  border: none;
+ margin-left:200px;
+ margin-top:-10px;
+ background-color:transparent;
+ width:10px;
+ height:10px;
+ svg {
+ font-size: 20px; /* Adjust the size here */
+}
+`;
+
+export const DropdownContent = styled.div`
+ display: ${props => (props.show ? 'block' : 'none')};
+ background-color: #f9f9f9;
+ position:absolute;
+ width: 120px;
+ float:right;
+ border-radius:4px;
+`;
+
+export const DropdownLink = styled.a`
+ color: black;
+ padding: 12px 16px;
+ text-decoration: none;
+ display: block;
+ font-size:14px;
+
+ &:hover {
+   background-color: purple;
+ }
+`;
 const MusicCard = () => {
   const [favoriteStatus, setFavoriteStatus] = useState(
     Array(tracks.length).fill(false)
@@ -161,6 +205,8 @@ const MusicCard = () => {
     updatedFavoriteStatus[index] = !updatedFavoriteStatus[index];
     setFavoriteStatus(updatedFavoriteStatus);
   };
+
+  
   const [songs, setSongs] = useState(tracks);
   const [isplaying, setisPlaying] = useState(false);
   const [currentsong, setCurrentSong] = useState(tracks[0]);
@@ -188,6 +234,21 @@ const MusicCard = () => {
     audioRef.current.currentTime =  0 ;
     setisPlaying(!isplaying)
   };
+
+  const [dropdownOpen, setDropdownOpen] = useState(Array(tracks.length).fill(false));
+
+  const handleDropdownToggle = (index) => {
+    const newDropdownOpen = [...dropdownOpen];
+    newDropdownOpen[index] = !newDropdownOpen[index];
+    setDropdownOpen(newDropdownOpen);
+  };
+  const [isShowing, setIsShowing] = useState(false)
+
+  const toggleModal = () => {
+    setIsShowing(prevState => !prevState);
+  };
+  
+
   return (
     <div>
       <WholeCardContainer>
@@ -205,6 +266,17 @@ const MusicCard = () => {
                       style={{ color: isFavorite ? "red" : "white" }}
                     />
                   </Favorite>
+                  <More>
+                  <MoreVertIcon onClick={() => handleDropdownToggle(index)} />
+                  <DropdownContent show={dropdownOpen[index]}>
+
+                <DropdownLink  >Delete Song</DropdownLink>
+                <DropdownLink >Update Song</DropdownLink>
+                <button onClick={() => toggleModal(index)}>Close</button>
+              </DropdownContent>
+                  </More>
+                  
+                  
                   
                     <CardImage
                       src={currentTrack.thumbnail}
@@ -229,6 +301,7 @@ const MusicCard = () => {
                     </Avatar>
                     <CreaterName>{currentTrack.creater}</CreaterName>
                   </Creater>
+                  
                 </CreaterInfo>
                 <PlayIcon>
                   <PlayArrowIcon onClick={() => playCurrent(index)}/>
