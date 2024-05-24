@@ -81,22 +81,22 @@ const ProgressBar = styled.div`
   height: 100%;
   background: #ffffff;
 `;
-const MusicPlayer = ({isplaying,setisPlaying,setSongs,currentsong,setCurrentSong,audioRef}) => {
+const MusicPlayer = ({isPlaying, setIsPlaying, setSongs, currentSong, setCurrentSong, audioRef}) => {
   const clickRef = useRef();
   const TogglePlayPause = ()=>
   {
-setisPlaying(!isplaying)
+setIsPlaying(!isPlaying)
   }
   // progress bar sneneka wede audiow yetenekabet bota yalewn music endil
   const checkWidth = (e) =>{
 let width = clickRef.current.clientWidth;
 const offset=e.nativeEvent.offsetX
 const divprogress = offset/width * 100;
-audioRef.current.currentTime=divprogress/100 *currentsong.length
+audioRef.current.currentTime=divprogress/100 *currentSong.length
 
   }
    const skipNext =()=>{
-    const index = tracks.findIndex(x=>x.title === currentsong.title)
+    const index = tracks.findIndex(x=>x.title === currentSong.title)
     if (index === tracks.length -1 ){
       setCurrentSong(tracks[0])
     }
@@ -104,10 +104,10 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
       setCurrentSong(tracks[index +  1])
     }
     audioRef.current.currentTime =  0 ;
-    setisPlaying(!isplaying)
+    setIsPlaying(!isPlaying)
    }
    const skipBack =()=>{
-    const index = tracks.findIndex(x=>x.title === currentsong.title)
+    const index = tracks.findIndex(x=>x.title === currentSong.title)
     if (index === 0 ){
       setCurrentSong(tracks[tracks.length-1])
     }
@@ -115,7 +115,7 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
       setCurrentSong(tracks[index - 1])
     }
     audioRef.current.currentTime =  0 ;
-    setisPlaying(!isplaying)
+    setIsPlaying(!isPlaying)
    }
    const skipForward = () => {
     audioRef.current.currentTime += 15;
@@ -126,10 +126,8 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
   return (
     <MusicPlayerContainer>
     <ImageContainer>
-      console.log(currentsong);
-      <PlayerImage  src={currentsong.cover_photo} alt="Player Image" />
+      <PlayerImage  src={currentSong.cover_photo} alt="Player Image" />
       </ImageContainer>
-    
     
       <ButtonContainer>
         <Button>
@@ -139,7 +137,7 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
           <FastRewindRoundedIcon onClick={skipBackward}/>
         </Button>
         <Button>
-        {isplaying ? <PauseRoundedIcon onClick={TogglePlayPause}/>:<PlayArrowRoundedIcon onClick={TogglePlayPause}/>}
+        {isPlaying ? <PauseRoundedIcon onClick={TogglePlayPause}/>:<PlayArrowRoundedIcon onClick={TogglePlayPause}/>}
           
         </Button>
         <Button>
@@ -150,7 +148,7 @@ audioRef.current.currentTime=divprogress/100 *currentsong.length
         </Button>
       </ButtonContainer>
       <ProgressContainer onClick={checkWidth} ref={clickRef}>
-        <ProgressBar style={{ width: `${currentsong.progress+ "%"}`}} />
+        {/* <ProgressBar style={{ width: `${currentSong.progress+ "%"}`}} /> */}
       </ProgressContainer>
       
     </MusicPlayerContainer>

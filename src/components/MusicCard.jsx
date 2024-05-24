@@ -210,6 +210,7 @@ const MusicCard = () => {
       audioRef.current.currentTime = 0;
     }
     setIsPlaying(!isPlaying);
+
   };
 
   return (
@@ -264,18 +265,18 @@ const MusicCard = () => {
       {currentSong && (
         <audio src={currentSong.audio_file} ref={audioRef} onTimeUpdate={onPlaying} />
       )}
-      {/* {currentSong && (
+      {currentSong && (
         <MusicPlayer
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          songs={tracks}
+          // songs={tracks}
           setSongs={setTracks}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
           audioRef={audioRef}
-          playCurrent={playCurrent}
+          // playCurrent={playCurrent}
         />
-      )} */}
+      )}
     </div>
   );
 };
