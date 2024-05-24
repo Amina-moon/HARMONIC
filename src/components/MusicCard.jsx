@@ -261,9 +261,9 @@ const MusicCard = () => {
           );
         })}
       </WholeCardContainer>
-      {/* {currentSong && (
+      {currentSong && (
         <audio src={currentSong.audio_file} ref={audioRef} onTimeUpdate={onPlaying} />
-      )} */}
+      )}
       {/* {currentSong && (
         <MusicPlayer
           isPlaying={isPlaying}
