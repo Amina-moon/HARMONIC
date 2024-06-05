@@ -169,7 +169,7 @@ const More = styled(IconButton)`
   position: absolute !important;
 
 `;
-export const DropdownButton = styled.button`
+const DropdownButton = styled.button`
   border: none;
  margin-left:200px;
  margin-top:-10px;
@@ -181,7 +181,7 @@ export const DropdownButton = styled.button`
 }
 `;
 
-export const DropdownContent = styled.div`
+const DropdownContent = styled.div`
  display: ${props => (props.show ? 'block' : 'none')};
  background-color: #f9f9f9;
  position:absolute;
@@ -190,7 +190,7 @@ export const DropdownContent = styled.div`
  border-radius:4px;
 `;
 
-export const DropdownLink = styled.a`
+const DropdownLink = styled.a`
  color: black;
  padding: 12px 16px;
  text-decoration: none;
@@ -239,10 +239,10 @@ const MusicCard = () => {
   const onPlaying = () => {
     if (audioRef.current) {
       const duration = audioRef.current.duration;
-      const currentTime = audioRef.current.currentTime;
+      const curentTime = audioRef.current.currentTime;
       setCurrentSong({
         ...currentSong,
-        progress: (currentTime / duration) * 100,
+        progress: (curentTime / duration) * 100,
         length: duration,
       });
     }
@@ -315,12 +315,12 @@ const MusicCard = () => {
         <MusicPlayer
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          // songs={tracks}
+          songs={tracks}
           setSongs={setTracks}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
           audioRef={audioRef}
-          // playCurrent={playCurrent}
+          
         />
       )}
     </div>
