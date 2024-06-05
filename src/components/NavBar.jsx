@@ -1,7 +1,8 @@
-import React from 'react'
+import React ,{useState} from 'react'
 import styled  from 'styled-components';
 import { Menu, Person2Rounded } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
+import Login from './Login';
 
 const NavBarDiv = styled.div`
 display:flex;
@@ -38,18 +39,34 @@ color:${({theme})=> theme.text_secondary} !important;
 
 `;
 
-function NavBar({ menuOpen,setMenuOpen}) {
+function NavBar({ menuOpen,setMenuOpen,onLoginClick}) {
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    setLoginOpen(true);
+  };
+
+  const closeLogin = () => {
+    setLoginOpen(false);
+  };
+  
+  
   return (
-    <NavBarDiv>
-        <MenuButton onClick={()=>setMenuOpen(!menuOpen)}>
+<>
+      <NavBarDiv>
+      <MenuButton onClick={()=>setMenuOpen(!menuOpen)}>
         <Menu/>
         </MenuButton>
-      
-        <ButtonDiv>
-        <Person2Rounded/>
-           Login
+
+        <ButtonDiv onClick={handleLoginClick} >
+          
+            <Person2Rounded  />
+            Login
+          
         </ButtonDiv>
-    </NavBarDiv>
+      </NavBarDiv>
+      {loginOpen && <Login onClose={closeLogin} />}
+    </>
   )
 }
 
