@@ -7,10 +7,11 @@ import { IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
-import axiosInstance from "./AxiosInstance";
+import { handleFavoriteClick } from "../utils/handleFavourite";
 
 // Styled components
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import axiosInstance from "./AxiosInstance";
 
 const WholeCardContainer = styled.div`
   display: flex;
@@ -205,7 +206,7 @@ const DropdownLink = styled.a`
 const MusicCard = () => {
   const [trackList, setTrackList] = useState([]);
   const [tracks, setTracks] = useState({});
-  const [favoriteStatus, setFavoriteStatus] = useState([]);
+  const [favoriteStatus, setFavoriteStatus] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const audioRef = useRef(null);
@@ -219,8 +220,22 @@ const MusicCard = () => {
         }, {});
         setTracks(trackData);
         setTrackList(response.data);
-        setFavoriteStatus(new Array(response.data.length).fill(false));
         setCurrentSong(response.data[0]); // Set the initial song if available
+      })
+      .catch(error => {
+        console.error('Error fetching the data', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axiosInstance.get('/api/favourite/list/')
+      .then(response => {
+        setFavoriteStatus(response.data);
+        const favouriteTrackData = response.data.reduce((acc, track) => {
+          acc[track.id] = track;
+          return acc;
+        }, {});
+        setFavoriteStatus(favouriteTrackData);
       })
       .catch(error => {
         console.error('Error fetching the data', error);
@@ -236,22 +251,6 @@ const MusicCard = () => {
       }
     }
   }, [isPlaying]);
-
-  const handleFavoriteClick = async (productId) => {
-    try {
-      const response = await axiosInstance.post('/favourite/update/', {
-        id: productId,
-      });
-
-      if (response.status === 200) {
-        const result = response.data;
-        setFavoriteStatus(result.favoriteStatus); // Assuming the response contains the updated favorite status
-      } else {
-        console.error('Failed to update favorite status');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }}
 
   const onPlaying = () => {
     if (audioRef.current) {
@@ -291,7 +290,7 @@ const MusicCard = () => {
                 <Top>
                   <Favorite>
                     <FavoriteIcon
-                      onClick={() => handleFavoriteClick(trackId)}
+                      onClick={() => handleFavoriteClick(trackId, setFavoriteStatus)}
                       style={{ color: isFavorite ? 'red' : 'white' }}
                     />
                   </Favorite>
