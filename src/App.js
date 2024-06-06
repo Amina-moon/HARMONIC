@@ -10,7 +10,7 @@ import Profile from "./pages/Profile.jsx";
 import Search from "./pages/Search.jsx";
 import Displaymusic from "./pages/Displaymusic.jsx";
 import MusicPlayer from "./components/MusicPlayer";
-import { Upload } from "@mui/icons-material";
+import  Upload  from "./pages/Upload";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.bgLight};
