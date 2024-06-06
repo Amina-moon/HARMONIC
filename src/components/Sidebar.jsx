@@ -102,14 +102,14 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,i
       name: "Favourites",
       icon: <FavoriteRounded />,
     },
-  ];
-
-  const button = [
     {
-      function: () => console.log("Upload"),
+      link: "/upload",
       name: "Upload",
       icon: <UploadRounded />,
     },
+  ];
+
+  const button = [
     {
       function: () => setDarkMode(!darkMode),
       name: darkMode?"Light Mode":"Dark Mode",
