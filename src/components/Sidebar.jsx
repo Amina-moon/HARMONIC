@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 import logo from "../images/Logo.png";
 import { Link } from "react-router-dom";
+
 const MainContainer = styled.div`
   flex: 0.5;
   flex-direction: column;
@@ -86,6 +87,7 @@ margin:10px 0px;
 `;
 
 const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,isLoggedIn,setLoggedIn}) => {
+  
   const menuItems = [
     {
       link: "/",
@@ -102,14 +104,21 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,i
       name: "Favourites",
       icon: <FavoriteRounded />,
     },
+    {
+      link: "/upload",
+      name:'Uplaod',
+      icon:<UploadRounded/>
+
+    }
   ];
 
   const button = [
-    {
-      function: () => console.log("Upload"),
-      name: "Upload",
-      icon: <UploadRounded />,
-    },
+    // {
+    //   function: () => console.log("Upload"),
+    //   name: "Upload",
+    //   icon: <UploadRounded />,
+     
+    // },
     {
       function: () => setDarkMode(!darkMode),
       name: darkMode?"Light Mode":"Dark Mode",

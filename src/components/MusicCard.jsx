@@ -237,10 +237,10 @@ const MusicCard = () => {
     }
   }, [isPlaying]);
 
-  const handleFavoriteClick = async (productId) => {
+  const handleFavoriteClick = async (trackId) => {
     try {
-      const response = await axiosInstance.post('/favourite/update/', {
-        id: productId,
+      const response = await axiosInstance.post('/api/favourite/update/', {
+        song: trackId,
       });
 
       if (response.status === 200) {

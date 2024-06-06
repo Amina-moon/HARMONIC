@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import MusicCard from '../components/MusicCard';
 
+
 const DashboardMain = styled.div`
 padding:20px 30px;
 padding-bottom:200px;
@@ -53,6 +54,7 @@ const Dashboard = () => {
         
       
       <MusicCard/>
+      
     </DashboardMain>
   )
 }
