@@ -100,8 +100,8 @@ const Favorite = styled(IconButton)`
   right: 6px;
   padding: 6px !important;
   border-radius: 50%;
-  z-index: 100;
-  display: flex;
+  
+  ${'' /* display: flex; */}
   align-items: center;
   background: ${({ theme }) => theme.text_secondary} !important;
   position: absolute !important;

@@ -8,6 +8,7 @@ import {
   UploadRounded,
   LightModeRounded,
   LogoutRounded,
+  LoginRounded,
   DarkModeRounded,
 } from "@mui/icons-material";
 import logo from "../images/Logo.png";
@@ -84,7 +85,7 @@ background-color:${({theme})=>theme.text_secondary};
 margin:10px 0px;
 `;
 
-const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode}) => {
+const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,isLoggedIn,setLoggedIn}) => {
   const menuItems = [
     {
       link: "/",
@@ -102,6 +103,7 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode}) => {
       icon: <FavoriteRounded />,
     },
   ];
+
   const button = [
     {
       function: () => console.log("Upload"),
@@ -113,12 +115,15 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode}) => {
       name: darkMode?"Light Mode":"Dark Mode",
       icon: darkMode?<LightModeRounded />:<DarkModeRounded/>,
     },
-    {
-      function: () => console.log("LightMode"),
-      name: "Log Out",
-      icon: <LogoutRounded />,
-    },
-  ];
+  //   {
+  //     function: () =>console.log('loggedin'),
+  //     name: isLoggedIn?"Log Out":"Log In",
+  //     icon: isLoggedIn?<LogoutRounded />:<LoginRounded/>,
+      
+  // },
+];
+
+
   return (
     <MainContainer menuOpen={menuOpen}>
       <Flex>

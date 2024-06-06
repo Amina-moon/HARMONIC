@@ -45,13 +45,14 @@ align-items:center;
 const Dashboard = () => {
   return (
     <DashboardMain>
-      <FilterContainer>
+      
         <Topic>
          ANASHID
           
         </Topic>
-        <MusicCard/>
-      </FilterContainer>
+        
+      
+      <MusicCard/>
     </DashboardMain>
   )
 }
