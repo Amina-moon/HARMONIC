@@ -7,6 +7,7 @@ import { IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
+import axiosInstance from "./AxiosInstance";
 
 // Styled components
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -202,7 +203,8 @@ const DropdownLink = styled.a`
  }
 `;
 const MusicCard = () => {
-  const [tracks, setTracks] = useState([]);
+  const [trackList, setTrackList] = useState([]);
+  const [tracks, setTracks] = useState({});
   const [favoriteStatus, setFavoriteStatus] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
@@ -211,7 +213,12 @@ const MusicCard = () => {
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/song/')
       .then(response => {
-        setTracks(response.data);
+        const trackData = response.data.reduce((acc, track) => {
+          acc[track.id] = track;
+          return acc;
+        }, {});
+        setTracks(trackData);
+        setTrackList(response.data);
         setFavoriteStatus(new Array(response.data.length).fill(false));
         setCurrentSong(response.data[0]); // Set the initial song if available
       })
@@ -230,11 +237,21 @@ const MusicCard = () => {
     }
   }, [isPlaying]);
 
-  const handleFavoriteClick = (index) => {
-    const updatedFavoriteStatus = [...favoriteStatus];
-    updatedFavoriteStatus[index] = !updatedFavoriteStatus[index];
-    setFavoriteStatus(updatedFavoriteStatus);
-  };
+  const handleFavoriteClick = async (productId) => {
+    try {
+      const response = await axiosInstance.post('/favourite/update/', {
+        id: productId,
+      });
+
+      if (response.status === 200) {
+        const result = response.data;
+        setFavoriteStatus(result.favoriteStatus); // Assuming the response contains the updated favorite status
+      } else {
+        console.error('Failed to update favorite status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }}
 
   const onPlaying = () => {
     if (audioRef.current) {
@@ -261,19 +278,20 @@ const MusicCard = () => {
   return (
     <div>
       <WholeCardContainer>
-        {tracks.map((currentTrack, index) => {
+       {Object.keys(tracks).map((trackId) => {
+          const currentTrack = tracks[trackId];
           const creatorInitial = currentTrack.user.username.charAt(0);
-          const isFavorite = favoriteStatus[index];
+          const isFavorite = favoriteStatus[trackId];
 
           // console.log(currentSong);
           return (
 
-            <CardWrapper key={index}>
+            <CardWrapper key={trackId}>
               <CardContainer>
                 <Top>
                   <Favorite>
                     <FavoriteIcon
-                      onClick={() => handleFavoriteClick(index)}
+                      onClick={() => handleFavoriteClick(trackId)}
                       style={{ color: isFavorite ? 'red' : 'white' }}
                     />
                   </Favorite>
@@ -301,7 +319,7 @@ const MusicCard = () => {
                   
                 </CreaterInfo>
                 <PlayIcon>
-                  <PlayArrowIcon onClick={() => playCurrent(index)} />
+                  <PlayArrowIcon onClick={() => playCurrent(trackId)} />
                 </PlayIcon>
               </CardContainer>
             </CardWrapper>
@@ -315,11 +333,12 @@ const MusicCard = () => {
         <MusicPlayer
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          songs={tracks}
-          setSongs={setTracks}
+          songs={trackList}
+          setSongs={setTrackList}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
           audioRef={audioRef}
+         
           
         />
       )}

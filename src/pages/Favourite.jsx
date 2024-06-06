@@ -10,7 +10,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import axios from "axios";
 import MusicPlayer from "../components/MusicPlayer";
-import FavoriteLink from '../components/FavoriteLink'
+import axiosInstance from "../components/AxiosInstance";
 const Container=styled.div`
 padding:20px 30px;
 padding-bottom:200px;
@@ -246,7 +246,7 @@ const Favourite = () => {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    FavoriteLink.get('/api/favourite/list/')
+    axiosInstance.get('/api/favourite/list/')
       .then(response => {
         setTracks(response.data);
         setFavoriteStatus(new Array(response.data.length).fill(false));
