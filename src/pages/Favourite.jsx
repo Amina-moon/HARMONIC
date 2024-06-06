@@ -1,16 +1,14 @@
 // import { Container } from "@mui/material";
 import React from "react";
 import styled from  'styled-components';
-import { tracks } from "../utils/Track";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { useState, useRef, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import axios from "axios";
 import MusicPlayer from "../components/MusicPlayer";
 import axiosInstance from "../components/AxiosInstance";
+import { handleFavoriteClick } from "../utils/handleFavourite";
 const Container=styled.div`
 padding:20px 30px;
 padding-bottom:200px;
@@ -239,7 +237,8 @@ const DropdownLink = styled.a`
 `;
 
 const Favourite = () => {
-  const [tracks, setTracks] = useState([]);
+  const [trackList, setTrackList] = useState([]);
+  const [tracks, setTracks] = useState({});
   const [favoriteStatus, setFavoriteStatus] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
@@ -248,7 +247,12 @@ const Favourite = () => {
   useEffect(() => {
     axiosInstance.get('/api/favourite/list/')
       .then(response => {
-        setTracks(response.data);
+        const trackData = response.data.reduce((acc, track) => {
+          acc[track.id] = track;
+          return acc;
+        }, {});
+        setTracks(trackData);
+        setTrackList(response.data);
         setFavoriteStatus(new Array(response.data.length).fill(false));
         setCurrentSong(response.data[0]); // Set the initial song if available
       })
@@ -267,11 +271,6 @@ const Favourite = () => {
     }
   }, [isPlaying]);
 
-  const handleFavoriteClick = (index) => {
-    const updatedFavoriteStatus = [...favoriteStatus];
-    updatedFavoriteStatus[index] = !updatedFavoriteStatus[index];
-    setFavoriteStatus(updatedFavoriteStatus);
-  };
 
   const onPlaying = () => {
     if (audioRef.current) {
@@ -299,20 +298,22 @@ const Favourite = () => {
       <Topic>Favorites</Topic>
       <div>
       <WholeCardContainer>
-        {tracks.map((currentTrack, index) => {
+      {Object.keys(tracks).map((trackId) => {
+          const currentTrack = tracks[trackId];
           const creatorInitial = currentTrack.user.username.charAt(0);
-          const isFavorite = favoriteStatus[index];
+          const isFavorite = favoriteStatus[trackId];
 
           // console.log(currentSong);
           return (
 
-            <CardWrapper key={index}>
+            <CardWrapper key={trackId}>
               <CardContainer>
                 <Top>
                   <Favorite>
                     <FavoriteIcon
-                      onClick={() => handleFavoriteClick(index)}
-                      style={{ color: isFavorite ? 'red' : 'white' }}
+                      onClick={() => handleFavoriteClick(trackId, setFavoriteStatus)}
+                      // style={{ color: isFavorite ? 'red' : 'white' }}
+                      style={{color: 'red'}}
                     />
                   </Favorite>
                   <CardImage
@@ -339,7 +340,7 @@ const Favourite = () => {
                   
                 </CreaterInfo>
                 <PlayIcon>
-                  <PlayArrowIcon onClick={() => playCurrent(index)} />
+                  <PlayArrowIcon onClick={() => playCurrent(trackId)} />
                 </PlayIcon>
               </CardContainer>
             </CardWrapper>
@@ -353,7 +354,7 @@ const Favourite = () => {
         <MusicPlayer
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          songs={tracks}
+          songs={trackList}
           setSongs={setTracks}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
