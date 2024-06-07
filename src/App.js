@@ -8,17 +8,17 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Favourite from "./pages/Favourite.jsx";
 import Profile from "./pages/Profile.jsx";
 import Search from "./pages/Search.jsx";
+import Upload  from "./pages/Upload";
 import Displaymusic from "./pages/Displaymusic.jsx";
 import MusicPlayer from "./components/MusicPlayer";
-import  Upload  from "./pages/Upload";
+
 
 const Container = styled.div`
   background: ${({ theme }) => theme.bgLight};
   display: flex;
   width: 100%;
-  height: 100vh;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  
+ 
 `;
 const Frame = styled.div`
   display: flex;
@@ -61,7 +61,7 @@ function App() {
               <Route path="/favourites" exact element={<Favourite />} />
               <Route path="/search" exact element={<Search />} />
               <Route path="/profile" exact element={<Profile />} />
-               <Route path="/upload" exact element={<Upload/>}/>
+              <Route path="/upload" exact element={<Upload/>}/>
               <Route path="/showmusic/:type" exact element={<Displaymusic />} />
             </Routes>
           </Frame>

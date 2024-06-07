@@ -82,8 +82,9 @@ const Image = styled.img`
 const HR = styled.div`
 wisth:100%;
 height:3px;
-background-color:${({theme})=>theme.text_secondary};
+background-color:${({ theme }) => theme.text_primary};
 margin:10px 0px;
+
 `;
 
 const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,isLoggedIn,setLoggedIn}) => {
@@ -106,19 +107,12 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,i
     },
     {
       link: "/upload",
-      name:'Uplaod',
-      icon:<UploadRounded/>
-
-    }
+      name: "Upload",
+      icon: <UploadRounded />,
+    },
   ];
 
   const button = [
-    // {
-    //   function: () => console.log("Upload"),
-    //   name: "Upload",
-    //   icon: <UploadRounded />,
-     
-    // },
     {
       function: () => setDarkMode(!darkMode),
       name: darkMode?"Light Mode":"Dark Mode",

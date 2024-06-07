@@ -51,9 +51,10 @@ const Dashboard = () => {
          ANASHID
           
         </Topic>
-        
+        <MusicCard/>
+       
       
-      <MusicCard/>
+      
       
     </DashboardMain>
   )

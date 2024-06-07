@@ -6,47 +6,47 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import FastForwardRoundedIcon from "@mui/icons-material/FastForwardRounded";
 import FastRewindRoundedIcon from "@mui/icons-material/FastRewindRounded";
-import VolumeMuteRoundedIcon from "@mui/icons-material/VolumeMuteRounded";
-import VolumeUpRoundedIcon from "@mui/icons-material/VolumeUpRounded";
-import Four from "../utils/Fourr.jpg";
-import { tracks } from "../utils/Track";
 
-const MusicPlayerContainer = styled.footer`
+
+export const MusicPlayerContainer = styled.footer`
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%; /* Subtract scrollbar width from 100% */
-  background: #1c1e27;
+  width: 100%; /* Subtract scrollbar width from 100%  #1c1e27*/
+  background-color:${({ theme }) => theme.bg};
   color: #ffffff;
   padding: 16px 40px;
   z-index: 9999;
   height: 45px;
   display: flex;
+  border:2px solid purple;
   @media (460px < width < 1200px) {
     padding: 16px 20px; /* Adjust the padding for smaller screens */
   }
 `;
-const PlayerImage = styled.img`
+export const PlayerImage = styled.img`
   width: 90px;
   height: 60px;
   border-radius: 5px;
 `;
-const ButtonContainer = styled.div`
+export const ButtonContainer = styled.div`
   display: flex;
   align-items: center !important;
+  
 
   margin-left: 250px;
   @media (460px < width < 1200px) {
     margin-left: 20px;
   }
 `;
-const Button = styled.button`
+export const Button = styled.button`
   background: transparent;
   border: none;
   color: white;
+  color: ${({ theme }) => theme.text_primary};
 `;
 
-const ImageContainer = styled.div`
+export const ImageContainer = styled.div`
   display: flex;
   align-items: center;
   margin-left: 70px;
@@ -54,22 +54,24 @@ const ImageContainer = styled.div`
     margin-left: 0px;
   }
 `;
-const ProgressContainer = styled.div`
+export const ProgressContainer = styled.div`
   width: 35%;
   height: 8px;
   background: purple;
   margin-top: 15px;
   border-radius: 4px;
   margin-left: 100px;
+ 
   @media (460px < width < 1200px) {
     width: 35%;
     margin-left: 15px;
   }
 `;
 
-const ProgressBar = styled.div`
+export const ProgressBar = styled.div`
   height: 100%;
-  background: #ffffff;
+  background: ${({ theme }) => theme.text_primary};
+  
 `;
 const MusicPlayer = ({
   isPlaying,
