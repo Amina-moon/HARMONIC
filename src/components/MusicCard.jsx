@@ -6,7 +6,6 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "./MusicPlayer";
 import { handleFavoriteClick } from "../utils/handleFavourite";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from '@mui/icons-material/Delete';
 import Modal from "react-modal";
 import axiosInstance from "./AxiosInstance";
 import {
@@ -106,13 +105,24 @@ const MusicCard = () => {
   };
 
   const handleUpdate = (trackId) => {
-    // Handle the update action here
+   
     console.log(`Update track with ID: ${trackId}`);
   };
 
   const handleDelete = (trackId) => {
-    // Handle the delete action here
-    console.log(`Delete track with ID: ${trackId}`);
+    axios
+      .delete(`http://127.0.0.1:8000/api/song/${trackId}`)
+      .then((response) => {
+        console.log(`Track with ID ${trackId} deleted successfully`);
+        setTracks((prevTracks) => {
+          const updatedTracks = { ...prevTracks };
+          delete updatedTracks[trackId];
+          return updatedTracks;
+        });
+      })
+      .catch((error) => {
+        console.error(`Error deleting track with ID ${trackId}`, error);
+      });
   };
 
   return (

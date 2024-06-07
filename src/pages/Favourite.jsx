@@ -100,7 +100,7 @@ const Favourite = () => {
                         onClick={() =>
                           handleFavoriteClick(trackId, setFavoriteStatus)
                         }
-                        // style={{ color: isFavorite ? 'red' : 'white' }}
+                       
                         style={{ color: "red" }}
                       />
                     </Favorite>

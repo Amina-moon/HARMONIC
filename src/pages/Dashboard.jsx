@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import MusicCard from '../components/MusicCard';
 
 
-const DashboardMain = styled.div`
+export const DashboardMain = styled.div`
 padding:20px 30px;
 padding-bottom:200px;
 height:100%;
@@ -18,7 +18,7 @@ gap:20px;
 }
 
 `;
-const FilterContainer = styled.div`
+export const FilterContainer = styled.div`
 dispaly:flex;
 flex-direction:column;
 border-radius:10px;
@@ -28,7 +28,7 @@ background-color:${({ theme }) => theme.bg};
 
 
 `;
-const Topic = styled.div`
+export const Topic = styled.div`
 color:${({ theme }) => theme.text_primary};
 margin-bottom:8px;
 font-size:24px;
