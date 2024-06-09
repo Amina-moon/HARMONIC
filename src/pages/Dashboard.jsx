@@ -43,7 +43,7 @@ align-items:center;
 
 
 `;
-const Dashboard = ({ isLoggedIn }) => {
+const Dashboard = ({ isLoggedIn, setVisible, user }) => {
 
   return (
     <DashboardMain>
@@ -52,7 +52,7 @@ const Dashboard = ({ isLoggedIn }) => {
          ANASHID
           
         </Topic>
-        <MusicCard isLoggedIn={isLoggedIn} />
+        <MusicCard isLoggedIn={isLoggedIn} setVisible={setVisible} user={user} />
        
       
       

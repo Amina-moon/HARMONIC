@@ -77,7 +77,6 @@ const MusicPlayer = ({
   isPlaying,
   setIsPlaying,
   songs,
-  setSongs,
   currentSong,
   setCurrentSong,
   audioRef,

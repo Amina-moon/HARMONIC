@@ -9,8 +9,8 @@ import Favourite from "./pages/Favourite.jsx";
 import Profile from "./pages/Profile.jsx";
 import Search from "./pages/Search.jsx";
 import Upload  from "./pages/Upload";
+import Update from './pages/Update';
 import Displaymusic from "./pages/Displaymusic.jsx";
-import MusicPlayer from "./components/MusicPlayer";
 
 
 const Container = styled.div`
@@ -29,6 +29,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [user, setUser] = useState({});
   const [isLoggedIn, setLoggedIn] = useState(false);
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
@@ -55,14 +56,21 @@ function App() {
               setVisible={setVisible}
               isLoggedIn={isLoggedIn}
               setLoggedIn={setLoggedIn}
+              setUser={setUser}
             />
             <Routes>
-              <Route path="/" exact element={<Dashboard isLoggedIn={isLoggedIn} />} />
+              <Route path="/" exact 
+                element={<Dashboard 
+                          isLoggedIn={isLoggedIn} 
+                          setVisible={setVisible}
+                          user={user}
+ />} />
               <Route path="/favourites" exact element={<Favourite />} />
               <Route path="/search" exact element={<Search />} />
               <Route path="/profile" exact element={<Profile />} />
               <Route path="/upload" exact element={<Upload/>}/>
               <Route path="/showmusic/:type" exact element={<Displaymusic />} />
+              <Route path="/update/:id" element={<Update />} />
             </Routes>
           </Frame>
         </Container>

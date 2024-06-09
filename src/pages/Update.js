@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../components/AxiosInstance';
 import styled from 'styled-components';
 
@@ -70,7 +70,8 @@ export const Message = styled.p`
   color: green;
 `;
 
-const Upload = () => {
+const Update = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState('');
   const [audioFile, setAudioFile] = useState(null);
   const [artist, setArtist] = useState('');
@@ -78,6 +79,19 @@ const Upload = () => {
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axiosInstance.get(`/api/song/${id}/`)
+      .then(response => {
+        const { title, artist, duration } = response.data;
+        setTitle(title);
+        setArtist(artist);
+        setDuration(duration);
+      })
+      .catch(error => {
+        console.error('Error fetching song data:', error);
+      });
+  }, [id]);
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -115,29 +129,29 @@ const Upload = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('audio_file', audioFile);
-    formData.append('artist', artist);
-    formData.append('duration', duration);
-    formData.append('cover_photo', coverPhoto);
+    if (title) formData.append('title', title);
+    if (audioFile) formData.append('audio_file', audioFile);
+    if (artist) formData.append('artist', artist);
+    if (duration) formData.append('duration', duration);
+    if (coverPhoto) formData.append('cover_photo', coverPhoto);
 
     try {
-      const response = await axiosInstance.post('/api/song/', formData);
+      const response = await axiosInstance.patch(`/api/song/${id}/`, formData);
 
-      if (response.status === 201) {
-        navigate('/'); // Redirect to dashboard after successful upload
+      if (response.status === 200) {
+        navigate('/'); // Redirect to dashboard after successful update
       } else {
-        setMessage('Failed to upload song.');
+        setMessage('Failed to update song.');
       }
     } catch (error) {
-      console.error('Error uploading song:', error);
-      setMessage('An error occurred while uploading the song.');
+      console.error('Error updating song:', error);
+      setMessage('An error occurred while updating the song.');
     }
   };
 
   return (
     <Container>
-      <Heading>Upload Song</Heading>
+      <Heading>Update Song</Heading>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label>Title:</Label>
@@ -145,7 +159,6 @@ const Upload = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
           />
         </FormGroup>
         <FormGroup>
@@ -155,7 +168,6 @@ const Upload = () => {
             name="audio_file"
             accept="audio/*"
             onChange={handleFileChange}
-            required
           />
         </FormGroup>
         <FormGroup>
@@ -164,7 +176,6 @@ const Upload = () => {
             type="text"
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
-            required
           />
         </FormGroup>
         <FormGroup>
@@ -173,7 +184,6 @@ const Upload = () => {
             type="text"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            required
           />
         </FormGroup>
         <FormGroup>
@@ -183,14 +193,13 @@ const Upload = () => {
             name="cover_photo"
             accept="image/*"
             onChange={handleFileChange}
-            required
           />
         </FormGroup>
-        <Button type="submit">Upload</Button>
+        <Button type="submit">Update</Button>
       </Form>
       {message && <Message>{message}</Message>}
     </Container>
   );
 };
 
-export default Upload;
+export default Update;

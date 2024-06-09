@@ -1,12 +1,10 @@
-// import { Container } from "@mui/material";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Avatar from "@mui/material/Avatar";
-import { useState, useRef, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MusicPlayer from "../components/MusicPlayer";
 import axiosInstance from "../components/AxiosInstance";
-import { handleFavoriteClick } from "../utils/handleFavourite";
+import { removeFavourite } from "../utils/handleFavourite";
 import {
   Container,
   WholeCardContainer,
@@ -24,10 +22,10 @@ import {
   PlayIcon,
   CreaterName,
 } from "../style/FavouriteStyle";
+
 const Favourite = () => {
   const [trackList, setTrackList] = useState([]);
   const [tracks, setTracks] = useState({});
-  const [favoriteStatus, setFavoriteStatus] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const audioRef = useRef(null);
@@ -42,7 +40,6 @@ const Favourite = () => {
         }, {});
         setTracks(trackData);
         setTrackList(response.data);
-        setFavoriteStatus(new Array(response.data.length).fill(false));
         setCurrentSong(response.data[0]); // Set the initial song if available
       })
       .catch((error) => {
@@ -63,10 +60,10 @@ const Favourite = () => {
   const onPlaying = () => {
     if (audioRef.current) {
       const duration = audioRef.current.duration;
-      const curentTime = audioRef.current.currentTime;
+      const currentTime = audioRef.current.currentTime;
       setCurrentSong({
         ...currentSong,
-        progress: (curentTime / duration) * 100,
+        progress: (currentTime / duration) * 100,
         length: duration,
       });
     }
@@ -80,6 +77,7 @@ const Favourite = () => {
     }
     setIsPlaying(!isPlaying);
   };
+
   return (
     <Container>
       <Topic>Favorites</Topic>
@@ -88,9 +86,7 @@ const Favourite = () => {
           {Object.keys(tracks).map((trackId) => {
             const currentTrack = tracks[trackId];
             const creatorInitial = currentTrack.user.username.charAt(0);
-            const isFavorite = favoriteStatus[trackId];
 
-            // console.log(currentSong);
             return (
               <CardWrapper key={trackId}>
                 <CardContainer>
@@ -98,10 +94,9 @@ const Favourite = () => {
                     <Favorite>
                       <FavoriteIcon
                         onClick={() =>
-                          handleFavoriteClick(trackId, setFavoriteStatus)
+                          removeFavourite(trackId, setTracks, setTrackList, setCurrentSong, currentSong)
                         }
-                       
-                        style={{ color: "red" }}
+                        style={{ color: "red"}}
                       />
                     </Favorite>
                     <CardImage
@@ -146,7 +141,6 @@ const Favourite = () => {
             isPlaying={isPlaying}
             setIsPlaying={setIsPlaying}
             songs={trackList}
-            setSongs={setTracks}
             currentSong={currentSong}
             setCurrentSong={setCurrentSong}
             audioRef={audioRef}

@@ -100,14 +100,8 @@ export const Message = styled.p`
   color: red;
 `;
 
-function NavBar({
-  menuOpen,
-  setMenuOpen,
-  visible,
-  setVisible,
-  isLoggedIn,
-  setLoggedIn,
-}) {
+function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLoggedIn, setUser }) {
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -119,9 +113,19 @@ function NavBar({
         username,
         password,
       });
+
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
+
+      const userResponse = await axios.get("http://127.0.0.1:8000/api/user/me/", {
+        headers: {
+          Authorization: `Bearer ${response.data.access}`,
+        },
+      });
+
+      setUser(userResponse.data);
       setLoggedIn(true);
+
     } catch (error) {
       setMessage("Invalid credentials");
       setUsername("");

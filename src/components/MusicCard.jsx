@@ -28,13 +28,15 @@ import {
   DropdownButton,
 } from "../style/MusicCardStyle";
 
-const MusicCard = ({isLoggedIn}) => {
+const MusicCard = ({ isLoggedIn, setVisible, user }) => {
   const [trackList, setTrackList] = useState([]);
   const [tracks, setTracks] = useState({});
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [trackToDelete, setTrackToDelete] = useState(null);
   const audioRef = useRef(null);
   const navigate = useNavigate();
 
@@ -71,7 +73,6 @@ const MusicCard = ({isLoggedIn}) => {
         });
     }
   }, [isLoggedIn]);
-  console.log(isLoggedIn);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -86,10 +87,10 @@ const MusicCard = ({isLoggedIn}) => {
   const onPlaying = () => {
     if (audioRef.current) {
       const duration = audioRef.current.duration;
-      const curentTime = audioRef.current.currentTime;
+      const currentTime = audioRef.current.currentTime;
       setCurrentSong({
         ...currentSong,
-        progress: (curentTime / duration) * 100,
+        progress: (currentTime / duration) * 100,
         length: duration,
       });
     }
@@ -109,24 +110,37 @@ const MusicCard = ({isLoggedIn}) => {
   };
 
   const handleUpdate = (trackId) => {
-   
-    console.log(`Update track with ID: ${trackId}`);
+    navigate(`/update/${trackId}`);
   };
 
-  const handleDelete = (trackId) => {
-    axiosInstance
-      .delete(`http://127.0.0.1:8000/api/song/${trackId}`)
-      .then((response) => {
-        console.log(`Track with ID ${trackId} deleted successfully`);
-        setTracks((prevTracks) => {
-          const updatedTracks = { ...prevTracks };
-          delete updatedTracks[trackId];
-          return updatedTracks;
+  const handleDelete = () => {
+    if (trackToDelete) {
+      axiosInstance
+        .delete(`http://127.0.0.1:8000/api/song/${trackToDelete}`)
+        .then((response) => {
+          console.log(`Track with ID ${trackToDelete} deleted successfully`);
+          setTracks((prevTracks) => {
+            const updatedTracks = { ...prevTracks };
+            delete updatedTracks[trackToDelete];
+            return updatedTracks;
+          });
+          setShowDeleteModal(false);
+          setTrackToDelete(null);
+        })
+        .catch((error) => {
+          console.error(`Error deleting track with ID ${trackToDelete}`, error);
         });
-      })
-      .catch((error) => {
-        console.error(`Error deleting track with ID ${trackId}`, error);
-      });
+    }
+  };
+
+  const openDeleteModal = (trackId) => {
+    setTrackToDelete(trackId);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setTrackToDelete(null);
   };
 
   return (
@@ -136,6 +150,7 @@ const MusicCard = ({isLoggedIn}) => {
           const currentTrack = tracks[trackId];
           const creatorInitial = currentTrack.user.username.charAt(0);
           const isFavorite = favoriteStatus[trackId];
+          const isCreator = currentTrack.user.id === user.id;
 
           return (
             <CardWrapper key={trackId}>
@@ -145,32 +160,28 @@ const MusicCard = ({isLoggedIn}) => {
                     <FavoriteIcon
                       onClick={() => {
                         if (!isLoggedIn) {
-                          navigate("/login"); // Redirect to login if not logged in
+                          setVisible(true); // Show login form if not logged in
                         } else {
                           handleFavoriteClick(trackId, setFavoriteStatus);
                         }
                       }}
                       style={{ color: isFavorite ? "red" : "white" }}
                     />
-                    
                   </Favorite>
-                  <CardImage
-                    src={currentTrack.cover_photo}
-                    alt="audio avatar"
-                  />
-                  <More>
-                    <MoreVertIcon
-                      onClick={() => handleDropdownClick(trackId)}
-                    />
-                    <DropdownContent show={dropdownVisible === trackId}>
-                      <DropdownButton onClick={() => handleUpdate(trackId)}>
-                        Update
-                      </DropdownButton>
-                      <DropdownButton onClick={() => handleDelete(trackId)}>
-                        Delete
-                      </DropdownButton>
-                    </DropdownContent>
-                  </More>
+                  <CardImage src={currentTrack.cover_photo} alt="audio avatar" />
+                  {isCreator && (
+                    <More>
+                      <MoreVertIcon onClick={() => handleDropdownClick(trackId)} />
+                      <DropdownContent show={dropdownVisible === trackId}>
+                        <DropdownButton onClick={() => handleUpdate(trackId)}>
+                          Update
+                        </DropdownButton>
+                        <DropdownButton onClick={() => openDeleteModal(trackId)}>
+                          Delete
+                        </DropdownButton>
+                      </DropdownContent>
+                    </More>
+                  )}
                 </Top>
                 <CardTitle>
                   <p>{currentTrack.title}</p>
@@ -183,13 +194,12 @@ const MusicCard = ({isLoggedIn}) => {
                 </SpecialCardContent>
                 <CreaterInfo>
                   <Creater>
-                    <Avatar style={{ height: "30px", width: "30px"  }}>
+                    <Avatar style={{ height: "30px", width: "30px" }}>
                       {creatorInitial}
                     </Avatar>
                     <CreaterName>{currentTrack.user.username}</CreaterName>
                   </Creater>
                 </CreaterInfo>
-
                 <PlayIcon>
                   <PlayArrowIcon onClick={() => playCurrent(trackId)} />
                 </PlayIcon>
@@ -199,11 +209,7 @@ const MusicCard = ({isLoggedIn}) => {
         })}
       </WholeCardContainer>
       {currentSong && (
-        <audio
-          src={currentSong.audio_file}
-          ref={audioRef}
-          onTimeUpdate={onPlaying}
-        />
+        <audio src={currentSong.audio_file} ref={audioRef} onTimeUpdate={onPlaying} />
       )}
       {currentSong && (
         <MusicPlayer
@@ -216,6 +222,28 @@ const MusicCard = ({isLoggedIn}) => {
           audioRef={audioRef}
         />
       )}
+
+      <Modal
+        isOpen={showDeleteModal}
+        onRequestClose={closeDeleteModal}
+        contentLabel="Delete Confirmation"
+        ariaHideApp={false}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+      >
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this track?</p>
+        <button onClick={handleDelete}>Yes, Delete</button>
+        <button onClick={closeDeleteModal}>Cancel</button>
+      </Modal>
     </div>
   );
 };
