@@ -103,7 +103,6 @@ export const Message = styled.p`
 function NavBar({
   menuOpen,
   setMenuOpen,
-  onLoginClick,
   visible,
   setVisible,
   isLoggedIn,
@@ -135,11 +134,14 @@ function NavBar({
   };
 
   const handleLogout = () => {
-    if (isLoggedIn) {
-      setLoggedIn(false);
-      setVisible(false);
-    }
-  };
+    // Remove tokens from localStorage
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+
+    // Update state to reflect that the user is logged out
+    setLoggedIn(false);
+    setVisible(false);
+    };
 
   return (
     <>

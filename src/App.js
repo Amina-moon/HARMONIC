@@ -42,7 +42,7 @@ function App() {
               darkMode={darkMode}
               // visible={visible}
               // setVisible={setVisible}
-              // isLoggedIn={isLoggedIn}
+              isLoggedIn={isLoggedIn}
               // setLoggedIn={setLoggedIn}
             />
           )}
@@ -57,7 +57,7 @@ function App() {
               setLoggedIn={setLoggedIn}
             />
             <Routes>
-              <Route path="/" exact element={<Dashboard />} />
+              <Route path="/" exact element={<Dashboard isLoggedIn={isLoggedIn} />} />
               <Route path="/favourites" exact element={<Favourite />} />
               <Route path="/search" exact element={<Search />} />
               <Route path="/profile" exact element={<Profile />} />

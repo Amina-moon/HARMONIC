@@ -7,6 +7,7 @@ import MusicPlayer from "./MusicPlayer";
 import { handleFavoriteClick } from "../utils/handleFavourite";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "./AxiosInstance";
 import {
   WholeCardContainer,
@@ -27,7 +28,7 @@ import {
   DropdownButton,
 } from "../style/MusicCardStyle";
 
-const MusicCard = () => {
+const MusicCard = ({isLoggedIn}) => {
   const [trackList, setTrackList] = useState([]);
   const [tracks, setTracks] = useState({});
   const [favoriteStatus, setFavoriteStatus] = useState({});
@@ -35,6 +36,7 @@ const MusicCard = () => {
   const [currentSong, setCurrentSong] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(null);
   const audioRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -54,20 +56,22 @@ const MusicCard = () => {
   }, []);
 
   useEffect(() => {
-    axiosInstance
-      .get("/api/favourite/list/")
-      .then((response) => {
-        setFavoriteStatus(response.data);
-        const favouriteTrackData = response.data.reduce((acc, track) => {
-          acc[track.id] = track;
-          return acc;
-        }, {});
-        setFavoriteStatus(favouriteTrackData);
-      })
-      .catch((error) => {
-        console.error("Error fetching the data", error);
-      });
-  }, []);
+    if (isLoggedIn) {
+      axiosInstance
+        .get("/api/favourite/list/")
+        .then((response) => {
+          const favouriteTrackData = response.data.reduce((acc, track) => {
+            acc[track.id] = track;
+            return acc;
+          }, {});
+          setFavoriteStatus(favouriteTrackData);
+        })
+        .catch((error) => {
+          console.error("Error fetching the data", error);
+        });
+    }
+  }, [isLoggedIn]);
+  console.log(isLoggedIn);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -110,7 +114,7 @@ const MusicCard = () => {
   };
 
   const handleDelete = (trackId) => {
-    axios
+    axiosInstance
       .delete(`http://127.0.0.1:8000/api/song/${trackId}`)
       .then((response) => {
         console.log(`Track with ID ${trackId} deleted successfully`);
@@ -139,9 +143,13 @@ const MusicCard = () => {
                 <Top>
                   <Favorite>
                     <FavoriteIcon
-                      onClick={() =>
-                        handleFavoriteClick(trackId, setFavoriteStatus)
-                      }
+                      onClick={() => {
+                        if (!isLoggedIn) {
+                          navigate("/login"); // Redirect to login if not logged in
+                        } else {
+                          handleFavoriteClick(trackId, setFavoriteStatus);
+                        }
+                      }}
                       style={{ color: isFavorite ? "red" : "white" }}
                     />
                     

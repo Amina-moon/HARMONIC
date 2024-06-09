@@ -87,7 +87,7 @@ margin:10px 0px;
 
 `;
 
-const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,isLoggedIn,setLoggedIn}) => {
+const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,isLoggedIn}) => {
   
   const menuItems = [
     {
@@ -100,17 +100,31 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,i
       name: "Search",
       icon: <SearchRounded />,
     },
-    {
+    // {
+    //   link: "/favourites",
+    //   name: "Favourites",
+    //   icon: <FavoriteRounded />,
+    // },
+    // {
+    //   link: "/upload",
+    //   name: "Upload",
+    //   icon: <UploadRounded />,
+    // },
+  ];
+
+  if (isLoggedIn) {
+    menuItems.push({
       link: "/favourites",
       name: "Favourites",
       icon: <FavoriteRounded />,
-    },
-    {
+    });
+
+    menuItems.push(    {
       link: "/upload",
       name: "Upload",
       icon: <UploadRounded />,
-    },
-  ];
+    });
+  }
 
   const button = [
     {
@@ -118,12 +132,6 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,visible,setVisible,i
       name: darkMode?"Light Mode":"Dark Mode",
       icon: darkMode?<LightModeRounded />:<DarkModeRounded/>,
     },
-  //   {
-  //     function: () =>console.log('loggedin'),
-  //     name: isLoggedIn?"Log Out":"Log In",
-  //     icon: isLoggedIn?<LogoutRounded />:<LoginRounded/>,
-      
-  // },
 ];
 
 
