@@ -71,7 +71,7 @@ export const CardContent = styled.p`
 `;
 
 export const SpecialCardContent = styled(CardContent)`
-  font-weight: 500;
+  font-weight: 50;
   margin-bottom: 0px;
 `;
 

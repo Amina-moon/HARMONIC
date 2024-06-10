@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { Menu, Person2Rounded, LogoutRounded ,LoginRounded} from "@mui/icons-material";
+import { Menu, Person2Rounded ,LoginRounded} from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Modal from "react-modal";
 import axios from "axios";
@@ -122,7 +122,7 @@ function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLog
           Authorization: `Bearer ${response.data.access}`,
         },
       });
-
+      localStorage.setItem("user", JSON.stringify(userResponse.data));
       setUser(userResponse.data);
       setLoggedIn(true);
 
@@ -141,10 +141,12 @@ function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLog
     // Remove tokens from localStorage
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
 
     // Update state to reflect that the user is logged out
     setLoggedIn(false);
     setVisible(false);
+    setUser(null);
     };
 
   return (

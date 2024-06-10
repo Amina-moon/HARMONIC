@@ -23,7 +23,7 @@ import {
   CreaterName,
 } from "../style/FavouriteStyle";
 
-const Favourite = () => {
+const Favourite = ({ isLoggedIn, setVisible, user }) => {
   const [trackList, setTrackList] = useState([]);
   const [tracks, setTracks] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);

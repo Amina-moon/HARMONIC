@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Avatar from "@mui/material/Avatar";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -28,10 +27,17 @@ import {
   DropdownButton,
 } from "../style/MusicCardStyle";
 
-const MusicCard = ({ isLoggedIn, setVisible, user }) => {
-  const [trackList, setTrackList] = useState([]);
-  const [tracks, setTracks] = useState({});
-  const [favoriteStatus, setFavoriteStatus] = useState({});
+const MusicCard = ({
+  isLoggedIn,
+  setVisible,
+  user,
+  tracks,
+  setTracks,
+  trackList,
+  setTrackList,
+  favoriteStatus,
+  setFavoriteStatus,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(null);
@@ -39,40 +45,6 @@ const MusicCard = ({ isLoggedIn, setVisible, user }) => {
   const [trackToDelete, setTrackToDelete] = useState(null);
   const audioRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/song/")
-      .then((response) => {
-        const trackData = response.data.reduce((acc, track) => {
-          acc[track.id] = track;
-          return acc;
-        }, {});
-        setTracks(trackData);
-        setTrackList(response.data);
-        setCurrentSong(response.data[0]); // Set the initial song if available
-      })
-      .catch((error) => {
-        console.error("Error fetching the data", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      axiosInstance
-        .get("/api/favourite/list/")
-        .then((response) => {
-          const favouriteTrackData = response.data.reduce((acc, track) => {
-            acc[track.id] = track;
-            return acc;
-          }, {});
-          setFavoriteStatus(favouriteTrackData);
-        })
-        .catch((error) => {
-          console.error("Error fetching the data", error);
-        });
-    }
-  }, [isLoggedIn]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -150,7 +122,7 @@ const MusicCard = ({ isLoggedIn, setVisible, user }) => {
           const currentTrack = tracks[trackId];
           const creatorInitial = currentTrack.user.username.charAt(0);
           const isFavorite = favoriteStatus[trackId];
-          const isCreator = currentTrack.user.id === user.id;
+          const isCreator = user && currentTrack.user.id === user.id;
 
           return (
             <CardWrapper key={trackId}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import styled, { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./utils/Theme";
 import Sidebar from "./components/Sidebar";
@@ -28,9 +28,19 @@ const Frame = styled.div`
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(true);
-  const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState({});
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    const storedUser = localStorage.getItem("user");
+    if (access_token && storedUser) {
+      setLoggedIn(true);
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <BrowserRouter>
@@ -44,7 +54,6 @@ function App() {
               // visible={visible}
               // setVisible={setVisible}
               isLoggedIn={isLoggedIn}
-              // setLoggedIn={setLoggedIn}
             />
           )}
          
@@ -59,16 +68,31 @@ function App() {
               setUser={setUser}
             />
             <Routes>
-              <Route path="/" exact 
-                element={<Dashboard 
-                          isLoggedIn={isLoggedIn} 
-                          setVisible={setVisible}
-                          user={user}
- />} />
+              <Route 
+                path="/" 
+                exact 
+                element={
+                  <Dashboard 
+                    isLoggedIn={isLoggedIn} 
+                    setVisible={setVisible}
+                    user={user}
+                  />
+                } 
+              />
               <Route path="/favourites" exact element={<Favourite />} />
-              <Route path="/search" exact element={<Search />} />
+              <Route 
+                path="/search" 
+                exact 
+                element={
+                  <Search 
+                    isLoggedIn={isLoggedIn} 
+                    setVisible={setVisible}
+                    user={user}
+                  />
+                } 
+              />
               <Route path="/profile" exact element={<Profile />} />
-              <Route path="/upload" exact element={<Upload/>}/>
+              <Route path="/upload" exact element={<Upload />} />
               <Route path="/showmusic/:type" exact element={<Displaymusic />} />
               <Route path="/update/:id" element={<Update />} />
             </Routes>

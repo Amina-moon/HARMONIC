@@ -7,8 +7,6 @@ import {
   FavoriteRounded,
   UploadRounded,
   LightModeRounded,
-  LogoutRounded,
-  LoginRounded,
   DarkModeRounded,
 } from "@mui/icons-material";
 import logo from "../images/Logo.png";
@@ -100,16 +98,6 @@ const Sidebar = ({menuOpen,setMenuOpen,setDarkMode,darkMode,isLoggedIn}) => {
       name: "Search",
       icon: <SearchRounded />,
     },
-    // {
-    //   link: "/favourites",
-    //   name: "Favourites",
-    //   icon: <FavoriteRounded />,
-    // },
-    // {
-    //   link: "/upload",
-    //   name: "Upload",
-    //   icon: <UploadRounded />,
-    // },
   ];
 
   if (isLoggedIn) {
