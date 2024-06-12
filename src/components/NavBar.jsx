@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Menu, Person2Rounded ,LoginRounded} from "@mui/icons-material";
+import { Menu, Person2Rounded, LoginRounded } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Modal from "react-modal";
 import axios from "axios";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import Register from "./Register"; // Import the Register component
 
 const NavBarDiv = styled.div`
   display: flex;
   justify-content: space-between;
-
   padding: 16px 40px;
   align-items: center;
   color: ${({ theme }) => theme.text_primary};
-
   gap: 30px;
   background: ${({ theme }) => theme.bg_Light};
   backdrop-filter: blur(5.7px);
@@ -44,16 +43,14 @@ export const PopupContainer = styled(Modal)`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height:400px;
+  height: 400px;
   border: 4px solid purple;
   padding: 20px;
-  
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  borderradius: 8px;
-  textalign: center;
+  border-radius: 8px;
+  text-align: center;
   background: white;
-
 `;
 
 const LoginContainer = styled.div`
@@ -68,7 +65,6 @@ export const LoginHeader = styled.h2`
 `;
 
 export const Closebutton = styled(IconButton)`
- 
   padding: 6px !important;
   border-radius: 50%;
 `;
@@ -82,7 +78,6 @@ export const InputGroup = styled.div`
 
 export const Label = styled.label`
   font-size: 1.3em;
-  
 `;
 
 export const Input = styled.input`
@@ -100,11 +95,19 @@ export const Message = styled.p`
   color: red;
 `;
 
+export const RegisterLink = styled.a`
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 10px;
+`;
+
 function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLoggedIn, setUser }) {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isRegisterVisible, setIsRegisterVisible] = useState(false); // Define state
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -147,7 +150,17 @@ function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLog
     setLoggedIn(false);
     setVisible(false);
     setUser(null);
-    };
+  };
+
+  const handleOpenRegister = () => {
+    setVisible(false);
+    setIsRegisterVisible(true);
+  };
+
+  const handleRegisterClose = () => {
+    setIsRegisterVisible(false);
+    setVisible(true);
+  };
 
   return (
     <>
@@ -199,8 +212,14 @@ function NavBar({ menuOpen, setMenuOpen, visible, setVisible, isLoggedIn, setLog
             <Button type="submit">Login</Button>
           </Form>
           {message && <Message>{message}</Message>}
+          <RegisterLink onClick={handleOpenRegister}>
+            Don't have an account? Register
+          </RegisterLink>
         </PopupContainer>
-        )}
+      )}
+      {isRegisterVisible && (
+        <Register isVisible={isRegisterVisible} setIsVisible={handleRegisterClose} />
+      )}
       </NavBarDiv>
      
     </>
